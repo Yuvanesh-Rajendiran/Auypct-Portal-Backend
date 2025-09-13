@@ -217,7 +217,7 @@ router.post('/submit', upload.fields([
         });
         const buffer = await Packer.toBuffer(doc);
 
-        const appUrl = process.env.APP_URL || 'http://localhost:3000';
+        const appUrl = process.env.APP_URL || 'https://auypct-portal-backend.onrender.com';
         const currentDateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
         const applicantHtmlTable = `
