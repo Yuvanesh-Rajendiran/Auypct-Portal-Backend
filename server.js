@@ -37,5 +37,13 @@ app.use((err, req, res, next) => {
     }
 });
 
-// Export app for Render
+// Bind to Render's PORT
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log('API endpoints: /api/users, /api/applications');
+  console.log('File uploads: /uploads');
+});
+
+// Export app for Render compatibility (though listen is now included)
 module.exports = app;
