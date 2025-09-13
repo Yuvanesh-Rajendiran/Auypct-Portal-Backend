@@ -8,7 +8,7 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-  origin: 'https://auypct-portal-frontend.vercel.app/', 
+  origin: 'https://auypct-portal-frontend.vercel.app',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true, // If you need cookies/auth
 };
@@ -19,17 +19,7 @@ app.use(express.urlencoded({ extended: true })); // For form data parsing
 // Serve uploads for file viewing (local storage)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend static files (fallback for assets like CSS/JS if added later)
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// Explicit routes for HTML pages (ensures navigation works)
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../frontend/index.html')));
-app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../frontend/index.html')));
-app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../frontend/track.html')));
-app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../frontend/admin.html')));
-app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../frontend/trustee.html')));
-
-// API routes (after static to avoid conflicts)
+// API routes (focus on backend functionality)
 app.use('/api/users', require('./routes/users'));
 app.use('/api/applications', require('./routes/applications'));
 
