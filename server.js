@@ -27,7 +27,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 /* ******************** for local host ******************** */
 
-// // Serve frontend static files (fallback for assets like CSS/JS if added later)
+// Serve frontend static files (fallback for assets like CSS/JS if added later)
 // app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
 
 // // Explicit routes for HTML pages (ensures navigation works)
