@@ -36,6 +36,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
 // app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
 // app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
+// app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/login.html')));
 
 /* ******************** for local host ******************** */
 

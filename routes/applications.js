@@ -118,7 +118,7 @@ router.post('/submit', upload.fields([
       { display: "Mother's Occupation", key: 'mother_occupation' },
       { display: 'Scholarship Justification', key: 'scholarship_justification' },
       { display: 'Fee Breakup', key: 'fee_breakup' },
-      { display: 'Requested Amount', key: 'requested_amount' },
+      // { display: 'Requested Amount', key: 'requested_amount' },
       { display: 'Confirmed Amount', key: 'confirmed_amount' },
       { display: 'Request Category', key: 'request_category' }
     ];
