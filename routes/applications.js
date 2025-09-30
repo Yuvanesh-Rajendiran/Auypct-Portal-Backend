@@ -169,19 +169,19 @@ router.post('/submit', upload.fields([
     }
 
     const category = applicantDetails.request_category;
-    const requiredDocs = {
-      educational: ['educational_aadhaar', 'educational_passbook', 'educational_marksheet', 'educational_fee_receipt', 'educational_school_id'],
-      women: ['women_aadhaar', 'women_passbook', 'women_business_docs'],
-      entrepreneur: ['entrepreneur_aadhaar', 'entrepreneur_passbook', 'entrepreneur_business_docs'],
-      medical: ['medical_aadhaar', 'medical_passbook', 'medical_letter', 'medical_receipt']
-    };
+    // const requiredDocs = {
+    //   educational: ['educational_aadhaar', 'educational_passbook', 'educational_marksheet', 'educational_fee_receipt', 'educational_school_id'],
+    //   women: ['women_aadhaar', 'women_passbook', 'women_business_docs'],
+    //   entrepreneur: ['entrepreneur_aadhaar', 'entrepreneur_passbook', 'entrepreneur_business_docs'],
+    //   medical: ['medical_aadhaar', 'medical_passbook', 'medical_letter', 'medical_receipt']
+    // };
 
-    if (category && requiredDocs[category]) {
-      const missingDocs = requiredDocs[category].filter(doc => !files[doc] || files[doc].length === 0);
-      if (missingDocs.length > 0) {
-        return res.status(400).json({ success: false, error: `Missing required documents: ${missingDocs.join(', ')}` });
-      }
-    }
+    // if (category && requiredDocs[category]) {
+    //   const missingDocs = requiredDocs[category].filter(doc => !files[doc] || files[doc].length === 0);
+    //   if (missingDocs.length > 0) {
+    //     return res.status(400).json({ success: false, error: `Missing required documents: ${missingDocs.join(', ')}` });
+    //   }
+    // }
 
     const newApp = new Application({
       trackingId,

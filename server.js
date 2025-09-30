@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+//const connectDB = require('./config/connectionDB');
 require('dotenv').config();
 
 const app = express();
@@ -10,12 +11,12 @@ const app = express();
 
 //Middleware
 
-const corsOptions = {
-  origin: 'https://auypct-portal-frontend.vercel.app',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // If you need cookies/auth
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: 'https://auypct-portal-frontend.vercel.app',
+//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//   credentials: true, // If you need cookies/auth
+// };
+// app.use(cors(corsOptions));
 
 /* ******************** comment when local host ******************** */
 
@@ -28,15 +29,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 /* ******************** for local host ******************** */
 
 // Serve frontend static files (fallback for assets like CSS/JS if added later)
-// app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
+app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
 
-// // Explicit routes for HTML pages (ensures navigation works)
-// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
-// app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
-// app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
-// app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
-// app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
-// app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/login.html')));
+// Explicit routes for HTML pages (ensures navigation works)
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
+app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
+app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
+app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
+app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
+app.get('/login.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/login.html')));
 
 /* ******************** for local host ******************** */
 
