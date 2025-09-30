@@ -11,12 +11,12 @@ const app = express();
 
 //Middleware
 
-// const corsOptions = {
-//   origin: 'https://auypct-portal-frontend.vercel.app',
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true, // If you need cookies/auth
-// };
-// app.use(cors(corsOptions));
+const corsOptions = {
+  origin: 'https://auypct-portal-frontend.vercel.app',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // If you need cookies/auth
+};
+app.use(cors(corsOptions));
 
 /* ******************** comment when local host ******************** */
 
