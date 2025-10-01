@@ -43,8 +43,24 @@ const upload = multer({
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for port 465, false for 587
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  logger: true,   // log everything to console
+  debug: true     // include SMTP traffic in logs
+});
+
+// Verify SMTP connection at startup
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("❌ SMTP connection error:", error);
+  } else {
+    console.log("✅ SMTP server is ready to send messages");
+  }
 });
 
 // Helper function to format field names and values
@@ -256,33 +272,61 @@ router.post('/submit', upload.fields([
     const adminTrusteeHtmlTable = `<html>...</html>`; // same as your previous HTML
 
     // ---------- 10. Send emails safely ----------
+    // Test transporter before sending
+try {
+  await transporter.verify();
+  console.log("✅ SMTP verified successfully before sending email");
+} catch (err) {
+  console.error("❌ SMTP verification failed inside /submit:", err);
+}
+
     try {
-      await Promise.all([
-        transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: applicantDetails.email_id,
-          subject: `AUYPCT Application - ID: ${trackingId}`,
-          html: applicantHtmlTable,
-          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-        }),
-        transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: 'yuvaneshr2002@gmail.com',
-          subject: 'New Scholarship Form Received - ID: ' + trackingId,
-          html: adminTrusteeHtmlTable,
-          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-        }),
-        transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: 'rdmvyfamily@gmail.com',
-          subject: 'New Scholarship Form Received - ID: ' + trackingId,
-          html: adminTrusteeHtmlTable,
-          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-        })
-      ]);
-    } catch (emailErr) {
-      console.error('Email sending error:', emailErr.stack);
-    }
+  // Send to applicant
+  try {
+    let infoApplicant = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: applicantDetails.email_id,
+      subject: `AUYPCT Application - ID: ${trackingId}`,
+      html: applicantHtmlTable,
+      attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+    });
+    console.log("✅ Applicant email sent: %s", infoApplicant.messageId);
+  } catch (err) {
+    console.error("❌ Failed to send applicant email:", err);
+  }
+
+  // Send to admin
+  try {
+    let infoAdmin = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: 'yuvaneshr2002@gmail.com',
+      subject: 'New Scholarship Form Received - ID: ' + trackingId,
+      html: adminTrusteeHtmlTable,
+      attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+    });
+    console.log("✅ Admin email sent: %s", infoAdmin.messageId);
+  } catch (err) {
+    console.error("❌ Failed to send admin email:", err);
+  }
+
+  // Send to trustee
+  try {
+    let infoTrustee = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: 'rdmvyfamily@gmail.com',
+      subject: 'New Scholarship Form Received - ID: ' + trackingId,
+      html: adminTrusteeHtmlTable,
+      attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+    });
+    console.log("✅ Trustee email sent: %s", infoTrustee.messageId);
+  } catch (err) {
+    console.error("❌ Failed to send trustee email:", err);
+  }
+
+} catch (emailErr) {
+  console.error("❌ General email sending error:", emailErr.stack);
+}
+
 
     // ---------- 11. Final response ----------
     res.status(200).json({ success: true, trackingId, message: 'Application submitted successfully' });
