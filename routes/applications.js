@@ -103,29 +103,29 @@ router.post('/submit', upload.fields([
   { name: 'medical_receipt', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const requiredFields = [
-      { display: 'Applicant Name', key: 'applicant_name' },
-      { display: 'Applicant Type', key: 'applicant_type' },
-      { display: 'DOB', key: 'dob' },
-      { display: 'Gender', key: 'gender' },
-      { display: 'Contact Number', key: 'contact_number' },
-      { display: 'Email Id', key: 'email_id' },
-      { display: 'Aadhaar Number', key: 'aadhaar_number' },
-      { display: 'Referral', key: 'referral' },
-      { display: 'Scheme Awareness', key: 'scheme_awareness' },
-      { display: 'Family Income Source', key: 'family_income_source' },
-      { display: "Father's Occupation", key: 'father_occupation' },
-      { display: "Mother's Occupation", key: 'mother_occupation' },
-      { display: 'Scholarship Justification', key: 'scholarship_justification' },
-      { display: 'Fee Breakup', key: 'fee_breakup' },
-      { display: 'Confirmed Amount', key: 'confirmed_amount' },
-      { display: 'Request Category', key: 'request_category' }
-    ];
+    // const requiredFields = [
+    //   { display: 'Applicant Name', key: 'applicant_name' },
+    //   { display: 'Applicant Type', key: 'applicant_type' },
+    //   { display: 'DOB', key: 'dob' },
+    //   { display: 'Gender', key: 'gender' },
+    //   { display: 'Contact Number', key: 'contact_number' },
+    //   { display: 'Email Id', key: 'email_id' },
+    //   { display: 'Aadhaar Number', key: 'aadhaar_number' },
+    //   { display: 'Referral', key: 'referral' },
+    //   { display: 'Scheme Awareness', key: 'scheme_awareness' },
+    //   { display: 'Family Income Source', key: 'family_income_source' },
+    //   { display: "Father's Occupation", key: 'father_occupation' },
+    //   { display: "Mother's Occupation", key: 'mother_occupation' },
+    //   { display: 'Scholarship Justification', key: 'scholarship_justification' },
+    //   { display: 'Fee Breakup', key: 'fee_breakup' },
+    //   { display: 'Confirmed Amount', key: 'confirmed_amount' },
+    //   { display: 'Request Category', key: 'request_category' }
+    // ];
 
-    const missingFields = requiredFields.filter(field => !req.body[field.key] || req.body[field.key].trim() === '');
-    if (missingFields.length > 0) {
-      return res.status(400).json({ success: false, error: `Missing required fields: ${missingFields.map(f => f.display).join(', ')}` });
-    }
+    // const missingFields = requiredFields.filter(field => !req.body[field.key] || req.body[field.key].trim() === '');
+    // if (missingFields.length > 0) {
+    //   return res.status(400).json({ success: false, error: `Missing required fields: ${missingFields.map(f => f.display).join(', ')}` });
+    // }
 
     const applicantDetails = {};
     for (const key in req.body) {
@@ -135,20 +135,20 @@ router.post('/submit', upload.fields([
       applicantDetails[key] = formattedValue;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(applicantDetails.email_id)) {
-      return res.status(400).json({ success: false, error: 'Invalid email format' });
-    }
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(applicantDetails.email_id)) {
+    //   return res.status(400).json({ success: false, error: 'Invalid email format' });
+    // }
 
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(applicantDetails.contact_number)) {
-      return res.status(400).json({ success: false, error: 'Invalid phone number format (must be 10 digits)' });
-    }
+    // const phoneRegex = /^[0-9]{10}$/;
+    // if (!phoneRegex.test(applicantDetails.contact_number)) {
+    //   return res.status(400).json({ success: false, error: 'Invalid phone number format (must be 10 digits)' });
+    // }
 
-    const aadhaarRegex = /^[0-9]{12}$/;
-    if (!aadhaarRegex.test(applicantDetails.aadhaar_number)) {
-      return res.status(400).json({ success: false, error: 'Invalid Aadhaar number format (must be 12 digits)' });
-    }
+    // const aadhaarRegex = /^[0-9]{12}$/;
+    // if (!aadhaarRegex.test(applicantDetails.aadhaar_number)) {
+    //   return res.status(400).json({ success: false, error: 'Invalid Aadhaar number format (must be 12 digits)' });
+    // }
 
     const trackingId = 'APP-' + crypto.randomBytes(4).toString('hex').toUpperCase();
 
