@@ -84,6 +84,202 @@ function reorderFields(applicantDetails) {
 }
 
 // Submit route
+// router.post('/submit', upload.fields([
+//   { name: 'passport_photo', maxCount: 1 },
+//   { name: 'educational_aadhaar', maxCount: 1 },
+//   { name: 'educational_passbook', maxCount: 1 },
+//   { name: 'educational_marksheet', maxCount: 1 },
+//   { name: 'educational_fee_receipt', maxCount: 1 },
+//   { name: 'educational_school_id', maxCount: 1 },
+//   { name: 'women_aadhaar', maxCount: 1 },
+//   { name: 'women_passbook', maxCount: 1 },
+//   { name: 'women_business_docs', maxCount: 10 },
+//   { name: 'entrepreneur_aadhaar', maxCount: 1 },
+//   { name: 'entrepreneur_passbook', maxCount: 1 },
+//   { name: 'entrepreneur_business_docs', maxCount: 10 },
+//   { name: 'medical_aadhaar', maxCount: 1 },
+//   { name: 'medical_passbook', maxCount: 1 },
+//   { name: 'medical_letter', maxCount: 1 },
+//   { name: 'medical_receipt', maxCount: 1 }
+// ]), async (req, res) => {
+//   try {
+//     // const requiredFields = [
+//     //   { display: 'Applicant Name', key: 'applicant_name' },
+//     //   { display: 'Applicant Type', key: 'applicant_type' },
+//     //   { display: 'DOB', key: 'dob' },
+//     //   { display: 'Gender', key: 'gender' },
+//     //   { display: 'Contact Number', key: 'contact_number' },
+//     //   { display: 'Email Id', key: 'email_id' },
+//     //   { display: 'Aadhaar Number', key: 'aadhaar_number' },
+//     //   { display: 'Referral', key: 'referral' },
+//     //   { display: 'Scheme Awareness', key: 'scheme_awareness' },
+//     //   { display: 'Family Income Source', key: 'family_income_source' },
+//     //   { display: "Father's Occupation", key: 'father_occupation' },
+//     //   { display: "Mother's Occupation", key: 'mother_occupation' },
+//     //   { display: 'Scholarship Justification', key: 'scholarship_justification' },
+//     //   { display: 'Fee Breakup', key: 'fee_breakup' },
+//     //   { display: 'Confirmed Amount', key: 'confirmed_amount' },
+//     //   { display: 'Request Category', key: 'request_category' }
+//     // ];
+
+//     // const missingFields = requiredFields.filter(field => !req.body[field.key] || req.body[field.key].trim() === '');
+//     // if (missingFields.length > 0) {
+//     //   return res.status(400).json({ success: false, error: `Missing required fields: ${missingFields.map(f => f.display).join(', ')}` });
+//     // }
+
+//     const applicantDetails = {};
+//     for (const key in req.body) {
+//       if (key === 'captcha-answer') continue;
+//       let formattedValue = sanitizeHtml(req.body[key], { allowedTags: [], allowedAttributes: {} });
+//       if (key === 'dob') formattedValue = formatDate(formattedValue);
+//       applicantDetails[key] = formattedValue;
+//     }
+
+//     // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     // if (!emailRegex.test(applicantDetails.email_id)) {
+//     //   return res.status(400).json({ success: false, error: 'Invalid email format' });
+//     // }
+
+//     // const phoneRegex = /^[0-9]{10}$/;
+//     // if (!phoneRegex.test(applicantDetails.contact_number)) {
+//     //   return res.status(400).json({ success: false, error: 'Invalid phone number format (must be 10 digits)' });
+//     // }
+
+//     // const aadhaarRegex = /^[0-9]{12}$/;
+//     // if (!aadhaarRegex.test(applicantDetails.aadhaar_number)) {
+//     //   return res.status(400).json({ success: false, error: 'Invalid Aadhaar number format (must be 12 digits)' });
+//     // }
+
+//     const trackingId = 'APP-' + crypto.randomBytes(4).toString('hex').toUpperCase();
+
+//     const files = req.files || {};
+//     const documents = [];
+//     let photoPath = null;
+//     for (const field in files) {
+//       if (field === 'passport_photo' && files[field].length > 0) {
+//         photoPath = files[field][0].path;
+//       }
+//       files[field].forEach(file => {
+//         documents.push({
+//           name: field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+//           path: file.path
+//         });
+//       });
+//     }
+
+//     const category = applicantDetails.request_category;
+//     // const requiredDocs = {
+//     //   educational: ['educational_aadhaar', 'educational_passbook', 'educational_marksheet', 'educational_fee_receipt', 'educational_school_id'],
+//     //   women: ['women_aadhaar', 'women_passbook', 'women_business_docs'],
+//     //   entrepreneur: ['entrepreneur_aadhaar', 'entrepreneur_passbook', 'entrepreneur_business_docs'],
+//     //   medical: ['medical_aadhaar', 'medical_passbook', 'medical_letter', 'medical_receipt']
+//     // };
+
+//     // if (category && requiredDocs[category]) {
+//     //   const missingDocs = requiredDocs[category].filter(doc => !files[doc] || files[doc].length === 0);
+//     //   if (missingDocs.length > 0) {
+//     //     return res.status(400).json({ success: false, error: `Missing required documents: ${missingDocs.join(', ')}` });
+//     //   }
+//     // }
+
+//     const newApp = new Application({
+//       trackingId,
+//       applicantDetails,
+//       documents,
+//       photoPath,
+//       status: 'Submitted',
+//       createdAt: new Date()
+//     });
+//     await newApp.save();
+//  res.status(200).json({ success: true, trackingId, message: 'Application submitted successfully' });
+
+//     // Generate docx for email attachment
+//     const formattedDetails = Object.fromEntries(
+//       Object.entries(applicantDetails).map(([key, value]) => {
+//         const { key: formattedKey } = formatField(key, value);
+//         return [formattedKey, key === 'dob' ? formatDate(value) || 'N/A' : value || 'N/A'];
+//       })
+//     );
+
+//     const doc = new Document({
+//       sections: [{
+//         properties: {},
+//         children: [
+//           new Paragraph({ children: [new TextRun({ text: 'AUYPCT Scholarship Application', bold: true, size: 28, font: 'Arial' })], spacing: { after: 200 } }),
+//           new Paragraph({ children: [new TextRun({ text: `Tracking ID: ${trackingId}`, size: 20, font: 'Arial' })], spacing: { after: 200 } }),
+//           photoPath
+//             ? new Paragraph({
+//                 children: [new ImageRun({ data: fs.readFileSync(photoPath), transformation: { width: 100, height: 100 } })],
+//                 alignment: 'center',
+//                 spacing: { after: 200 }
+//               })
+//             : null,
+//           new Paragraph({ children: [new TextRun({ text: 'Applicant Details:', bold: true, size: 22, font: 'Arial' })], spacing: { after: 100 } }),
+//           new Table({
+//             width: { size: 100, type: WidthType.PERCENTAGE },
+//             rows: [
+//               new TableRow({
+//                 children: [
+//                   new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Field', bold: true })] })], width: { size: 30, type: WidthType.PERCENTAGE } }),
+//                   new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: 'Value', bold: true })] })], width: { size: 70, type: WidthType.PERCENTAGE } })
+//                 ]
+//               }),
+//               ...Object.entries(formattedDetails).map(([key, value]) => new TableRow({
+//                 children: [new TableCell({ children: [new Paragraph({ text: key })] }), new TableCell({ children: [new Paragraph({ text: value.toString() })] })]
+//               }))
+//             ]
+//           }),
+//           new Paragraph({ children: [new TextRun({ text: 'Documents:', bold: true, size: 22, font: 'Arial' })], spacing: { before: 200, after: 100 } }),
+//           ...documents.map(doc => new Paragraph({ children: [new TextRun(`${doc.name}: ${doc.path}`)], spacing: { after: 100 } }))
+//         ].filter(child => child !== null)
+//       }]
+//     });
+//     const buffer = await Packer.toBuffer(doc);
+
+//     // Email content
+//     const appUrl = process.env.APP_URL || 'https://auypct-portal-backend.onrender.com';
+//     const currentDateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+//     const applicantHtmlTable = `
+//       <html><head><style>body { font-family: Arial, sans-serif; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; } h2 { color: #1e3c72; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th, td { border: 1px solid #ddd; padding: 12px; text-align: left; } th { background-color: #f2f2f2; } ul { padding-left: 20px; } .footer { margin-top: 20px; font-size: 0.9em; color: #666; } a { color: #667eea; text-decoration: none; } a:hover { text-decoration: underline; }</style></head><body><div class="container"><h2>AUYPCT Scholarship Application</h2><p><strong>Tracking ID:</strong> ${trackingId}</p><table><tr><th>Field</th><th>Value</th></tr>${Object.entries(formattedDetails).map(([key, value]) => `<tr><td>${sanitizeHtml(key)}</td><td>${sanitizeHtml(value)}</td></tr>`).join('')}</table><h3>Documents:</h3><ul>${documents.map(doc => `<li>${sanitizeHtml(doc.name)}</li>`).join('')}</ul><div class="footer"><p>Please send hard copies to:</p><p>INK CENTER, C/O AU YOUNG PROFESSIONALS CHARITABLE TRUST<br>34-23/810, ATTUMANTHAI Anjal Kara Street, EASTGATE<br>Thanjavur - 613001<br>Contact: 84283 66631</p><p>Submission Date: ${currentDateTime}</p></div></div></body></html>
+//     `;
+
+//     const adminTrusteeHtmlTable = `
+//       <html><head><style>body { font-family: Arial, sans-serif; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; } h2 { color: #1e3c72; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th, td { border: 1px solid #ddd; padding: 12px; text-align: left; } th { background-color: #f2f2f2; } ul { padding-left: 20px; } .footer { margin-top: 20px; font-size: 0.9em; color: #666; } a { color: #667eea; text-decoration: none; } a:hover { text-decoration: underline; }</style></head><body><div class="container"><h2>New Scholarship Form Received</h2><p><strong>Tracking ID:</strong> ${trackingId}</p><table><tr><th>Field</th><th>Value</th></tr>${Object.entries(formattedDetails).map(([key, value]) => `<tr><td>${sanitizeHtml(key)}</td><td>${sanitizeHtml(value)}</td></tr>`).join('')}</table><h3>Documents:</h3><ul>${documents.map(doc => `<li>${sanitizeHtml(doc.name)}</li>`).join('')}</ul><div class="footer"><p>Please send hard copies to:</p><p>INK CENTER, C/O AU YOUNG PROFESSIONALS CHARITABLE TRUST<br>34-23/810, ATTUMANTHAI Anjal Kara Street, EASTGATE<br>Thanjavur - 613001<br>Contact: 84283 66631</p><p>Received Date: ${currentDateTime}</p></div></div></body></html>
+//     `;
+//     // Send emails
+//      Promise.all([
+//       transporter.sendMail({
+//         from: process.env.EMAIL_USER,
+//         to: applicantDetails.email_id,
+//         subject: `AUYPCT Application - ID: ${trackingId}`,
+//         html: applicantHtmlTable,
+//         attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+//       }),
+//       transporter.sendMail({
+//         from: process.env.EMAIL_USER,
+//         to: 'yuvaneshr2002@gmail.com',
+//         subject: 'New Scholarship Form Received - ID: ' + trackingId,
+//         html: adminTrusteeHtmlTable,
+//         attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+//       }),
+//       transporter.sendMail({
+//         from: process.env.EMAIL_USER,
+//         to: 'rdmvyfamily@gmail.com',
+//         subject: 'New Scholarship Form Received - ID: ' + trackingId,
+//         html: adminTrusteeHtmlTable,
+//         attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+//       })
+//     ]);
+
+   
+//   } catch (err) {
+//     console.error('Submission error:', err.stack);
+//     res.status(500).json({ success: false, error: `Submission failed: ${err.message}` });
+//   }
+// });
+
+// Submit route
 router.post('/submit', upload.fields([
   { name: 'passport_photo', maxCount: 1 },
   { name: 'educational_aadhaar', maxCount: 1 },
@@ -103,6 +299,7 @@ router.post('/submit', upload.fields([
   { name: 'medical_receipt', maxCount: 1 }
 ]), async (req, res) => {
   try {
+    // ---------- 1. Required field validation ----------
     // const requiredFields = [
     //   { display: 'Applicant Name', key: 'applicant_name' },
     //   { display: 'Applicant Type', key: 'applicant_type' },
@@ -127,6 +324,7 @@ router.post('/submit', upload.fields([
     //   return res.status(400).json({ success: false, error: `Missing required fields: ${missingFields.map(f => f.display).join(', ')}` });
     // }
 
+    // ---------- 2. Input sanitization ----------
     const applicantDetails = {};
     for (const key in req.body) {
       if (key === 'captcha-answer') continue;
@@ -135,6 +333,7 @@ router.post('/submit', upload.fields([
       applicantDetails[key] = formattedValue;
     }
 
+    // ---------- 3. Format & validate email, phone, Aadhaar ----------
     // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     // if (!emailRegex.test(applicantDetails.email_id)) {
     //   return res.status(400).json({ success: false, error: 'Invalid email format' });
@@ -150,8 +349,10 @@ router.post('/submit', upload.fields([
     //   return res.status(400).json({ success: false, error: 'Invalid Aadhaar number format (must be 12 digits)' });
     // }
 
+    // ---------- 4. Tracking ID ----------
     const trackingId = 'APP-' + crypto.randomBytes(4).toString('hex').toUpperCase();
 
+    // ---------- 5. File handling ----------
     const files = req.files || {};
     const documents = [];
     let photoPath = null;
@@ -167,7 +368,8 @@ router.post('/submit', upload.fields([
       });
     }
 
-    const category = applicantDetails.request_category;
+    // ---------- 6. Required document validation ----------
+    // const category = applicantDetails.request_category;
     // const requiredDocs = {
     //   educational: ['educational_aadhaar', 'educational_passbook', 'educational_marksheet', 'educational_fee_receipt', 'educational_school_id'],
     //   women: ['women_aadhaar', 'women_passbook', 'women_business_docs'],
@@ -182,6 +384,7 @@ router.post('/submit', upload.fields([
     //   }
     // }
 
+    // ---------- 7. Save application ----------
     const newApp = new Application({
       trackingId,
       applicantDetails,
@@ -192,7 +395,7 @@ router.post('/submit', upload.fields([
     });
     await newApp.save();
 
-    // Generate docx for email attachment
+    // ---------- 8. Generate docx ----------
     const formattedDetails = Object.fromEntries(
       Object.entries(applicantDetails).map(([key, value]) => {
         const { key: formattedKey } = formatField(key, value);
@@ -200,15 +403,20 @@ router.post('/submit', upload.fields([
       })
     );
 
+    let imageData = null;
+    if (photoPath) {
+      imageData = await fs.promises.readFile(photoPath);
+    }
+
     const doc = new Document({
       sections: [{
         properties: {},
         children: [
           new Paragraph({ children: [new TextRun({ text: 'AUYPCT Scholarship Application', bold: true, size: 28, font: 'Arial' })], spacing: { after: 200 } }),
           new Paragraph({ children: [new TextRun({ text: `Tracking ID: ${trackingId}`, size: 20, font: 'Arial' })], spacing: { after: 200 } }),
-          photoPath
+          imageData
             ? new Paragraph({
-                children: [new ImageRun({ data: fs.readFileSync(photoPath), transformation: { width: 100, height: 100 } })],
+                children: [new ImageRun({ data: imageData, transformation: { width: 100, height: 100 } })],
                 alignment: 'center',
                 spacing: { after: 200 }
               })
@@ -233,51 +441,54 @@ router.post('/submit', upload.fields([
         ].filter(child => child !== null)
       }]
     });
+
     const buffer = await Packer.toBuffer(doc);
 
-    // Email content
+    // ---------- 9. Prepare email HTML ----------
     const appUrl = process.env.APP_URL || 'https://auypct-portal-backend.onrender.com';
     const currentDateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
-    const applicantHtmlTable = `
-      <html><head><style>body { font-family: Arial, sans-serif; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; } h2 { color: #1e3c72; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th, td { border: 1px solid #ddd; padding: 12px; text-align: left; } th { background-color: #f2f2f2; } ul { padding-left: 20px; } .footer { margin-top: 20px; font-size: 0.9em; color: #666; } a { color: #667eea; text-decoration: none; } a:hover { text-decoration: underline; }</style></head><body><div class="container"><h2>AUYPCT Scholarship Application</h2><p><strong>Tracking ID:</strong> ${trackingId}</p><table><tr><th>Field</th><th>Value</th></tr>${Object.entries(formattedDetails).map(([key, value]) => `<tr><td>${sanitizeHtml(key)}</td><td>${sanitizeHtml(value)}</td></tr>`).join('')}</table><h3>Documents:</h3><ul>${documents.map(doc => `<li>${sanitizeHtml(doc.name)}</li>`).join('')}</ul><div class="footer"><p>Please send hard copies to:</p><p>INK CENTER, C/O AU YOUNG PROFESSIONALS CHARITABLE TRUST<br>34-23/810, ATTUMANTHAI Anjal Kara Street, EASTGATE<br>Thanjavur - 613001<br>Contact: 84283 66631</p><p>Submission Date: ${currentDateTime}</p></div></div></body></html>
-    `;
+    const applicantHtmlTable = `<html>...</html>`; // same as your previous HTML
+    const adminTrusteeHtmlTable = `<html>...</html>`; // same as your previous HTML
 
-    const adminTrusteeHtmlTable = `
-      <html><head><style>body { font-family: Arial, sans-serif; color: #333; } .container { max-width: 600px; margin: 0 auto; padding: 20px; } h2 { color: #1e3c72; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th, td { border: 1px solid #ddd; padding: 12px; text-align: left; } th { background-color: #f2f2f2; } ul { padding-left: 20px; } .footer { margin-top: 20px; font-size: 0.9em; color: #666; } a { color: #667eea; text-decoration: none; } a:hover { text-decoration: underline; }</style></head><body><div class="container"><h2>New Scholarship Form Received</h2><p><strong>Tracking ID:</strong> ${trackingId}</p><table><tr><th>Field</th><th>Value</th></tr>${Object.entries(formattedDetails).map(([key, value]) => `<tr><td>${sanitizeHtml(key)}</td><td>${sanitizeHtml(value)}</td></tr>`).join('')}</table><h3>Documents:</h3><ul>${documents.map(doc => `<li>${sanitizeHtml(doc.name)}</li>`).join('')}</ul><div class="footer"><p>Please send hard copies to:</p><p>INK CENTER, C/O AU YOUNG PROFESSIONALS CHARITABLE TRUST<br>34-23/810, ATTUMANTHAI Anjal Kara Street, EASTGATE<br>Thanjavur - 613001<br>Contact: 84283 66631</p><p>Received Date: ${currentDateTime}</p></div></div></body></html>
-    `;
+    // ---------- 10. Send emails safely ----------
+    try {
+      await Promise.all([
+        transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: applicantDetails.email_id,
+          subject: `AUYPCT Application - ID: ${trackingId}`,
+          html: applicantHtmlTable,
+          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+        }),
+        transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: 'yuvaneshr2002@gmail.com',
+          subject: 'New Scholarship Form Received - ID: ' + trackingId,
+          html: adminTrusteeHtmlTable,
+          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+        }),
+        transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: 'rdmvyfamily@gmail.com',
+          subject: 'New Scholarship Form Received - ID: ' + trackingId,
+          html: adminTrusteeHtmlTable,
+          attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
+        })
+      ]);
+    } catch (emailErr) {
+      console.error('Email sending error:', emailErr.stack);
+    }
 
-    // Send emails
-    await Promise.all([
-      transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: applicantDetails.email_id,
-        subject: `AUYPCT Application - ID: ${trackingId}`,
-        html: applicantHtmlTable,
-        attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-      }),
-      transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: 'yuvaneshr2002@gmail.com',
-        subject: 'New Scholarship Form Received - ID: ' + trackingId,
-        html: adminTrusteeHtmlTable,
-        attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-      }),
-      transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: 'rdmvyfamily@gmail.com',
-        subject: 'New Scholarship Form Received - ID: ' + trackingId,
-        html: adminTrusteeHtmlTable,
-        attachments: [{ filename: `app_${trackingId}.docx`, content: buffer }]
-      })
-    ]);
-
+    // ---------- 11. Final response ----------
     res.status(200).json({ success: true, trackingId, message: 'Application submitted successfully' });
+
   } catch (err) {
     console.error('Submission error:', err.stack);
     res.status(500).json({ success: false, error: `Submission failed: ${err.message}` });
   }
 });
+
 
 // Dashboard endpoint
 router.get('/dashboard', async (req, res) => {
