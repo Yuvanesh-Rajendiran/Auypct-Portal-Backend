@@ -352,7 +352,7 @@ try {
       // Send to trustee (API)
       try {
         await sendBrevoEmail(
-          'salhinasan@gmail.com',
+          // 'salhinasan@gmail.com',
           'New Scholarship Form Received - ID: ' + trackingId,
           adminTrusteeHtmlTable,
           [{ filename: `app_${trackingId}.docx`, content: buffer }]
