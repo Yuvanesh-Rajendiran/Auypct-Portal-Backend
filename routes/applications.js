@@ -399,7 +399,7 @@ router.get('/dashboard', async (req, res) => {
         }
       };
     });
-    console.log('Dashboard overview:', overview);
+    console.log('Dashboard retrieved');
     res.json({ success: true, overview });
   } catch (error) {
     console.error('Dashboard error:', error.stack);
