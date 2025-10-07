@@ -32,12 +32,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
 
 // // Explicit routes for HTML pages (ensures navigation works)
-// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
-// app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
-// app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
-// app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
-// app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
-// app.get('/app.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/app.html')));
+// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/index.html')));
+// app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/index.html')));
+// app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/track.html')));
+// app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/admin.html')));
+// app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/trustee.html')));
+// app.get('/app.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/app.html')));
 
 /* ******************** for local host ******************** */
 
