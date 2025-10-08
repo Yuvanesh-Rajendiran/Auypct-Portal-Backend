@@ -1,72 +1,78 @@
-const express = require('express'); 
-const mongoose = require('mongoose');
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
-//const connectDB = require('./config/connectionDB');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const connectDB = require('./config/connectionDB');
+
+dotenv.config();
 
 const app = express();
 
-/* ******************** comment when local host ******************** */
+// Determine environment (default = development)
+const isProduction = process.env.NODE_ENV === 'production';
 
-//Middleware
-
-const corsOptions = {
-  origin: 'https://auypct-portal-frontend.vercel.app',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // If you need cookies/auth
-};
-app.use(cors(corsOptions));
-
-/* ******************** comment when local host ******************** */
+// Middleware for CORS
+if (isProduction) {
+  // Production CORS (Frontend hosted remotely)
+  app.use(cors({
+    origin: 'https://auypct-portal-frontend.vercel.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }));
+} else {
+  // Local development CORS
+  app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }));
+}
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // For form data parsing
+app.use(express.urlencoded({ extended: true }));
 
-// Serve uploads for file viewing (local storage)
+// Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-/* ******************** for local host ******************** */
+// ************************************
+// ENV: DEVELOPMENT (local frontend support)
+// ************************************
+if (!isProduction) {
+  // Serve frontend files if you run both locally
+  app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
 
-// Serve frontend static files (fallback for assets like CSS/JS if added later)
-// app.use(express.static(path.join(__dirname, '../Auypct-Portal-Frontend')));
-
-// // Explicit routes for HTML pages (ensures navigation works)
-// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/index.html')));
-// app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
-// app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
-// app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
-// app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
-// app.get('/app.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/app.html')));
-
-/* ******************** for local host ******************** */
-
-
-// API routes (focus on backend functionality)
-app.use('/api/users', require('./routes/users'));
-app.use('/api/applications', require('./routes/applications'));
+  // Explicit HTML routes for navigation fallback
+  app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/html/index.html')));
+  app.get('/index.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/index.html')));
+  app.get('/track.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/track.html')));
+  app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/admin.html')));
+  app.get('/trustee.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/trustee.html')));
+  app.get('/app.html', (req, res) => res.sendFile(path.join(__dirname, '../Auypct-Portal-Frontend/app.html')));
+}
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+connectDB();
 
-// Custom 404 handler for API routes
-app.use((err, req, res, next) => {
-    if (req.path.startsWith('/api/')) {
-        res.status(404).json({ success: false, error: 'API endpoint not found' });
-    } else {
-        res.status(404).send('Page not found');
-    }
+// ******** API Routes ********
+app.use('/api/users', require('./routes/user'));
+app.use('/api/applications', require('./routes/application'));
+
+// ******** Error + 404 Handling ********
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    res.status(404).json({ success: false, error: 'API endpoint not found' });
+  } else {
+    res.status(404).send('Page not found');
+  }
 });
 
-// Bind to Render's PORT
+// Server startup
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
-  console.log('API endpoints: /api/users, /api/applications');
-  console.log('File uploads: /uploads');
+  console.log(`✅ Server running in ${isProduction ? 'production' : 'development'} mode`);
+  console.log(`🌐 Listening at: http://localhost:${PORT}`);
+  console.log('📍 API endpoints: /api/users, /api/applications');
+  console.log('📂 File uploads: /uploads');
 });
 
-// Export app for Render compatibility (though listen is now included)
 module.exports = app;
